@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import "antd/dist/antd.css";
 import { StaticMap } from "react-map-gl";
 import DeckGL from "@deck.gl/react";
 import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 import { Menu, Dropdown, Button, message } from "antd";
 import { DownOutlined } from "@ant-design/icons";
-import data from "./data/data.json";
+import crimeData from "./data/data.json";
 
 // Set your mapbox access token here
 const MAPBOX_ACCESS_TOKEN =
@@ -28,17 +28,30 @@ export default function App({
   radiusPixels = 30,
   mapStyle = "mapbox://styles/mapbox/dark-v9",
 }) {
-  const uniqueCrimeTypes = [...new Set(data.map((crime) => crime.TYPE))];
+  const [data, setData] = useState(crimeData);
+  const [crimeType, setCrimeType] = useState(null);
+  const uniqueCrimeTypes = [...new Set(crimeData.map((crime) => crime.TYPE))];
   const crimeTypeMenu = (
     <Menu onClick={handleMenuClick}>
       {uniqueCrimeTypes.map((type, index) => (
         <Menu.Item key={index}>{type}</Menu.Item>
       ))}
+      <Menu.Item key="ALL">All Crimes</Menu.Item>
     </Menu>
   );
 
   function handleMenuClick(e) {
-    message.success("Selected " + uniqueCrimeTypes[e.key]);
+    if (e.key === "ALL") {
+      setCrimeType("ALL");
+      setData(crimeData);
+      message.success("Showing all crimes", 1);
+    } else {
+      setCrimeType(uniqueCrimeTypes[e.key]);
+      setData(
+        crimeData.filter((crime) => crime.TYPE === uniqueCrimeTypes[e.key])
+      );
+      message.success("Selected " + uniqueCrimeTypes[e.key], 1);
+    }
   }
 
   const layers = [
@@ -68,7 +81,7 @@ export default function App({
       >
         <Dropdown overlay={crimeTypeMenu} placement="bottomRight">
           <Button>
-            Crime type <DownOutlined />
+            {crimeType ? crimeType : "Crime type"} <DownOutlined />
           </Button>
         </Dropdown>
       </div>
