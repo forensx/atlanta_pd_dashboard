@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "ba773957a2f46ac8961c51a002283486",
+    "revision": "5aea6a63db1bca4b463fe38e81a61e47",
     "url": "/atlanta_pd_dashboard/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/atlanta_pd_dashboard/static/css/2.04ff9426.chunk.css"
   },
   {
-    "revision": "ef9f4a5dd6cd4bc74b5d",
+    "revision": "7fb39838d6c0d6c59137",
     "url": "/atlanta_pd_dashboard/static/css/main.5ecd60fb.chunk.css"
   },
   {
@@ -20,8 +20,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/atlanta_pd_dashboard/static/js/2.d0b7cb3c.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "ef9f4a5dd6cd4bc74b5d",
-    "url": "/atlanta_pd_dashboard/static/js/main.97d34ea5.chunk.js"
+    "revision": "7fb39838d6c0d6c59137",
+    "url": "/atlanta_pd_dashboard/static/js/main.dd798c26.chunk.js"
   },
   {
     "revision": "08c957d819128e45ba5e",
