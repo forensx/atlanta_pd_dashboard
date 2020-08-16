@@ -20,13 +20,13 @@ const ambientLight = new AmbientLight({
 
 const pointLight1 = new PointLight({
   color: [255, 255, 255],
-  intensity: 0.8,
+  intensity: 0.6,
   position: [-0.144528, 49.739968, 80000],
 });
 
 const pointLight2 = new PointLight({
   color: [255, 255, 255],
-  intensity: 0.8,
+  intensity: 0.6,
   position: [-3.807751, 54.104682, 8000],
 });
 
@@ -145,12 +145,13 @@ export default function App({
           extruded: true,
           getPosition: (d) => [d.COORDINATES[1], d.COORDINATES[0]],
           pickable: true,
-          radius: 250,
+          radius: 100,
           upperPercentile,
+          lowerPercentile: 0,
           material,
 
           transitions: {
-            elevationScale: 3000,
+            elevationScale: 1000,
           },
         })
       : null,
