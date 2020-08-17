@@ -67,6 +67,15 @@ export const colorRange = [
   [209, 55, 78],
 ];
 
+export const heatmapColorRange = [
+  [255, 255, 178],
+  [254, 217, 118],
+  [254, 178, 76],
+  [253, 141, 60],
+  [240, 59, 32],
+  [189, 0, 38],
+];
+
 function getTooltip({ object }) {
   if (!object) {
     return null;
@@ -198,15 +207,25 @@ export default function App({
             paddingTop: "16px",
           }}
         >
-          {colorRange.map((color) => (
-            <div
-              style={{
-                width: "16.6667%",
-                height: "18px",
-                backgroundColor: `rgb(${color[0]}, ${color[1]}, ${color[2]})`,
-              }}
-            />
-          ))}
+          {vizType === "Hexagon"
+            ? colorRange.map((color) => (
+                <div
+                  style={{
+                    width: "16.6667%",
+                    height: "18px",
+                    backgroundColor: `rgb(${color[0]}, ${color[1]}, ${color[2]})`,
+                  }}
+                />
+              ))
+            : heatmapColorRange.map((color) => (
+                <div
+                  style={{
+                    width: "16.6667%",
+                    height: "18px",
+                    backgroundColor: `rgb(${color[0]}, ${color[1]}, ${color[2]})`,
+                  }}
+                />
+              ))}
         </div>
         <div
           style={{
