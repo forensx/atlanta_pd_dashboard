@@ -8,6 +8,11 @@ import { HexagonLayer } from "@deck.gl/aggregation-layers";
 import { Menu, Dropdown, Button, message } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import crimeData from "./data/data.json";
+import { Typography } from "antd";
+import { Statistic } from "antd";
+import { Divider } from "antd";
+
+const { Title, Text } = Typography;
 
 // Set your mapbox access token here
 const MAPBOX_ACCESS_TOKEN =
@@ -76,6 +81,10 @@ function getTooltip({ object }) {
     ${count} Crimes`;
 }
 
+function getCrimeCount(data) {
+  return data.length;
+}
+
 export default function App({
   intensity = 1,
   threshold = 0.1,
@@ -113,8 +122,8 @@ export default function App({
 
   const vizTypeMenu = (
     <Menu onClick={handleVizChange}>
-      <Menu.Item key="Heatmap">Heatmap</Menu.Item>
       <Menu.Item key="Hexagon">Hexagon</Menu.Item>
+      <Menu.Item key="Heatmap">Heatmap</Menu.Item>
     </Menu>
   );
 
@@ -164,26 +173,90 @@ export default function App({
     >
       <div
         style={{
+          backgroundColor: "white",
           zIndex: "1000",
           position: "absolute",
-          marginTop: "1.5%",
-          right: "2%",
+          marginTop: "1.0%",
+          right: "1.5%",
           display: "flex",
-          flexDirection: "row",
+          flexDirection: "column",
+          height: "380px",
+          width: "340px",
+          paddingLeft: "20px",
+          paddingRight: "20px",
+          paddingTop: "12px",
         }}
       >
-        <div style={{ marginRight: 10 }}>
+        <Title level={4}>Atlanta Crime Dashboard</Title>
+        <Text>All reported crimes in Atlanta in 2019.</Text>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-evenly",
+            paddingTop: "16px",
+          }}
+        >
+          {colorRange.map((color) => (
+            <div
+              style={{
+                width: "16.6667%",
+                height: "18px",
+                backgroundColor: `rgb(${color[0]}, ${color[1]}, ${color[2]})`,
+              }}
+            />
+          ))}
+        </div>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingTop: "6px",
+          }}
+        >
+          <Text>Fewer crimes</Text>
+          <Text>More crimes</Text>
+        </div>
+        <div style={{ paddingTop: "12px" }}>
+          <Text>
+            Data source:{" "}
+            <a href="http://opendata.atlantapd.org/Default.aspx">
+              APD Open Data Portal
+            </a>
+          </Text>
+        </div>
+        <div style={{ paddingTop: "12px" }}>
+          <Statistic title="Crimes" value={getCrimeCount(data)} />
+        </div>
+        <Divider />
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignContent: "center",
+            justifyContent: "space-around",
+          }}
+        >
           <Dropdown overlay={crimeTypeMenu} placement="bottomRight">
             <Button>
               {crimeType ? crimeType : "Crime type"} <DownOutlined />
             </Button>
           </Dropdown>
+          <Dropdown overlay={vizTypeMenu} placement="bottomRight">
+            <Button>
+              {vizType ? vizType : "Choose visualization type"} <DownOutlined />
+            </Button>
+          </Dropdown>
         </div>
-        <Dropdown overlay={vizTypeMenu} placement="bottomRight">
-          <Button>
-            {vizType ? vizType : "Choose visualization type"} <DownOutlined />
-          </Button>
-        </Dropdown>
+        <div style={{ paddingTop: "24px", paddingLeft: "60%" }}>
+          <Text>
+            View Code:{" "}
+            <a href="https://github.com/forensx/atlanta_pd_dashboard">GitHub</a>
+          </Text>
+        </div>
       </div>
       <div
         style={{
