@@ -145,6 +145,7 @@ export default function App({
     vizType === "Heatmap"
       ? new HeatmapLayer({
           data,
+          colorRange: heatmapColorRange,
           id: "heatmp-layer",
           pickable: true,
           getPosition: (d) => [d.COORDINATES[1], d.COORDINATES[0]],
