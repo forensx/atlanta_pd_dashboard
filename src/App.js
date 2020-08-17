@@ -90,10 +90,9 @@ function getTimeRange(data) {
   return data.reduce(
     (range, d) => {
       const t = d.DATE;
-      // console.log(range);
+
       range[0] = Math.min(range[0], t);
-      range[1] = Math.min(range[1], t);
-      // return [0, 1];
+      range[1] = Math.max(range[1], t);
       return range;
     },
     [Infinity, -Infinity]
@@ -101,8 +100,6 @@ function getTimeRange(data) {
 }
 
 function formatLabel(t) {
-  console.log(t);
-  //invalid date, t is NaN
   const date = new Date(t);
   return `${date.getUTCFullYear()}/${
     date.getUTCMonth() + 1
@@ -189,13 +186,6 @@ export default function App({
           elevationScale: data && data.length ? 50 : 0,
           extruded: true,
           getPosition: (d) => [d.COORDINATES[1], d.COORDINATES[0]],
-          getFilterValue: (d) => d.DATE,
-          filterRange: [filterValue[0], filterValue[1]],
-          filterSoftRange: [
-            filterValue[0] * 0.9 + filterValue[1] * 0.1,
-            filterValue[0] * 0.1 + filterValue[1] * 0.9,
-          ],
-          extensions: [dataFilter],
           pickable: true,
           radius: 100,
           upperPercentile,
@@ -257,13 +247,13 @@ export default function App({
             preventStyleDiffing={true}
             mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
           />
-          {timeRange && (
+          {timeRange && vizType === "Heatmap" && (
             <RangeInput
               min={timeRange[0]}
               max={timeRange[1]}
               value={filterValue}
               formatLabel={formatLabel}
-              animationSpeed={MS_PER_DAY * 30}
+              animationSpeed={MS_PER_DAY}
               onChange={setFilter}
             />
           )}
