@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import "antd/dist/antd.css";
 import { StaticMap } from "react-map-gl";
 import DeckGL from "@deck.gl/react";
 import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 import { AmbientLight, PointLight, LightingEffect } from "@deck.gl/core";
 import { HexagonLayer } from "@deck.gl/aggregation-layers";
+import { DataFilterExtension } from "@deck.gl/extensions";
 import { Menu, Dropdown, Button, message } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import crimeData from "./data/data.json";
+import RangeInput from "./range-input";
 
 // Set your mapbox access token here
 const MAPBOX_ACCESS_TOKEN =
@@ -76,6 +78,37 @@ function getTooltip({ object }) {
     ${count} Crimes`;
 }
 
+const dataFilter = new DataFilterExtension({
+  filterSize: 1,
+  fp64: false,
+});
+
+function getTimeRange(data) {
+  if (!data) {
+    return null;
+  }
+  return data.reduce(
+    (range, d) => {
+      const t = d.DATE;
+      // console.log(range);
+      range[0] = Math.min(range[0], t);
+      range[1] = Math.min(range[1], t);
+      // return [0, 1];
+      return range;
+    },
+    [Infinity, -Infinity]
+  );
+}
+
+function formatLabel(t) {
+  console.log(t);
+  //invalid date, t is NaN
+  const date = new Date(t);
+  return `${date.getUTCFullYear()}/${
+    date.getUTCMonth() + 1
+  }/${date.getUTCDate()}`;
+}
+
 export default function App({
   intensity = 1,
   threshold = 0.1,
@@ -86,6 +119,11 @@ export default function App({
 }) {
   const [vizType, setVizType] = useState("Hexagon");
   const [data, setData] = useState(crimeData);
+
+  const [filter, setFilter] = useState(null);
+  const timeRange = useMemo(() => getTimeRange(data), [data]);
+  const filterValue = filter || timeRange;
+
   const [crimeType, setCrimeType] = useState(null);
   const uniqueCrimeTypes = [...new Set(crimeData.map((crime) => crime.TYPE))];
   const crimeTypeMenu = (
@@ -124,12 +162,19 @@ export default function App({
   }
 
   const layers = [
-    vizType === "Heatmap"
+    data && vizType === "Heatmap"
       ? new HeatmapLayer({
           data,
           id: "heatmp-layer",
           pickable: true,
           getPosition: (d) => [d.COORDINATES[1], d.COORDINATES[0]],
+          getFilterValue: (d) => d.DATE,
+          filterRange: [filterValue[0], filterValue[1]],
+          filterSoftRange: [
+            filterValue[0] * 0.9 + filterValue[1] * 0.1,
+            filterValue[0] * 0.1 + filterValue[1] * 0.9,
+          ],
+          extensions: [dataFilter],
           radiusPixels,
           intensity,
           threshold,
@@ -144,6 +189,13 @@ export default function App({
           elevationScale: data && data.length ? 50 : 0,
           extruded: true,
           getPosition: (d) => [d.COORDINATES[1], d.COORDINATES[0]],
+          getFilterValue: (d) => d.DATE,
+          filterRange: [filterValue[0], filterValue[1]],
+          filterSoftRange: [
+            filterValue[0] * 0.9 + filterValue[1] * 0.1,
+            filterValue[0] * 0.1 + filterValue[1] * 0.9,
+          ],
+          extensions: [dataFilter],
           pickable: true,
           radius: 100,
           upperPercentile,
@@ -156,6 +208,8 @@ export default function App({
         })
       : null,
   ];
+
+  const MS_PER_DAY = 8.64e7;
 
   return (
     <div
@@ -203,6 +257,16 @@ export default function App({
             preventStyleDiffing={true}
             mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
           />
+          {timeRange && (
+            <RangeInput
+              min={timeRange[0]}
+              max={timeRange[1]}
+              value={filterValue}
+              formatLabel={formatLabel}
+              animationSpeed={MS_PER_DAY * 30}
+              onChange={setFilter}
+            />
+          )}
         </DeckGL>
       </div>
     </div>
