@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/atlanta_pd_dashboard/precache-manifest.152fb8a1d0c7fb4855207687b52cea23.js"
+  "/atlanta_pd_dashboard/precache-manifest.c232050a5cc558f50c9093c3eaa8b4ba.js"
 );
 
 self.addEventListener('message', (event) => {
