@@ -4,6 +4,8 @@ import Slider from "@material-ui/core/Slider";
 import Button from "@material-ui/core/IconButton";
 import PlayIcon from "@material-ui/icons/PlayArrow";
 import PauseIcon from "@material-ui/icons/Pause";
+import getMuiTheme from "material-ui/styles/getMuiTheme";
+import { MuiThemeProvider } from "material-ui";
 
 const PositionContainer = styled("div")({
   position: "absolute",
@@ -13,6 +15,14 @@ const PositionContainer = styled("div")({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
+});
+
+//?
+const muiTheme = getMuiTheme({
+  slider: {
+    trackColor: "#FF0000",
+    selectionColor: "#FF0000",
+  },
 });
 
 const SliderInput = withStyles({
@@ -67,14 +77,17 @@ export default function RangeInput({
       >
         {isPlaying ? <PauseIcon title="Stop" /> : <PlayIcon title="Animate" />}
       </Button>
-      <SliderInput
-        min={min}
-        max={max}
-        value={value}
-        onChange={(event, newValue) => onChange(newValue)}
-        valueLabelDisplay="auto"
-        valueLabelFormat={formatLabel}
-      />
+      <MuiThemeProvider muiTheme={muiTheme}>
+        <SliderInput
+          style={{ fill: "white" }}
+          min={min}
+          max={max}
+          value={value}
+          onChange={(event, newValue) => onChange(newValue)}
+          valueLabelDisplay="auto"
+          valueLabelFormat={formatLabel}
+        />
+      </MuiThemeProvider>
     </PositionContainer>
   );
 }
