@@ -6,7 +6,7 @@ import { HeatmapLayer } from "@deck.gl/aggregation-layers";
 import { AmbientLight, PointLight, LightingEffect } from "@deck.gl/core";
 import { HexagonLayer } from "@deck.gl/aggregation-layers";
 import { DataFilterExtension } from "@deck.gl/extensions";
-import { Menu, Dropdown, Button, message } from "antd";
+import { Menu, Dropdown, Button, message, Slider } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import crimeData from "./data/data.json";
 import { Typography } from "antd";
@@ -128,11 +128,13 @@ export default function App({
   threshold = 0.1,
   radiusPixels = 30,
   mapStyle = "mapbox://styles/mapbox/dark-v9",
-  upperPercentile = 100,
+  // upperPercentile = 100,
   coverage = 1,
 }) {
   const [vizType, setVizType] = useState("Hexagon");
   const [data, setData] = useState(crimeData);
+
+  const [percentile, setPercentile] = useState([0, 100]);
 
   const [filter, setFilter] = useState(null);
   const timeRange = useMemo(() => getTimeRange(data), [data]);
@@ -163,6 +165,10 @@ export default function App({
     }
   }
 
+  function onSliderChange(value) {
+    setPercentile(value);
+  }
+
   const vizTypeMenu = (
     <Menu onClick={handleVizChange}>
       <Menu.Item key="Hexagon">Hexagon</Menu.Item>
@@ -190,6 +196,8 @@ export default function App({
             filterValue[0] * 0.1 + filterValue[1] * 0.9,
           ],
           extensions: [dataFilter],
+          upperPercentile: percentile[1],
+          lowerPercentile: percentile[0],
           radiusPixels,
           intensity,
           threshold,
@@ -206,8 +214,8 @@ export default function App({
           getPosition: (d) => [d.COORDINATES[1], d.COORDINATES[0]],
           pickable: true,
           radius: 100,
-          upperPercentile,
-          lowerPercentile: 0,
+          upperPercentile: percentile[1],
+          lowerPercentile: percentile[0],
           material,
 
           transitions: {
@@ -233,7 +241,7 @@ export default function App({
           right: "1.5%",
           display: "flex",
           flexDirection: "column",
-          height: "380px",
+          height: "470px",
           width: "340px",
           paddingLeft: "20px",
           paddingRight: "20px",
@@ -294,6 +302,18 @@ export default function App({
         <div style={{ paddingTop: "12px" }}>
           <Statistic title="Crimes" value={getCrimeCount(data)} />
         </div>
+        {vizType === "Hexagon" ? (
+          <div style={{ paddingTop: "12px" }}>
+            <Text>Filter by percentile</Text>
+            <Slider
+              range
+              // tooltipVisible
+              defaultValue={[0, 100]}
+              marks={{ 0: "0", 100: "100" }}
+              onAfterChange={onSliderChange}
+            />
+          </div>
+        ) : null}
         <Divider />
         <div
           style={{
