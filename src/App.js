@@ -359,17 +359,17 @@ export default function App({
             preventStyleDiffing={true}
             mapboxApiAccessToken={MAPBOX_ACCESS_TOKEN}
           />
-          {timeRange && vizType === "Heatmap" && (
-            <RangeInput
-              min={timeRange[0]}
-              max={timeRange[1]}
-              value={filterValue}
-              formatLabel={formatLabel}
-              animationSpeed={MS_PER_DAY}
-              onChange={setFilter}
-            />
-          )}
         </DeckGL>
+        {timeRange && vizType === "Heatmap" && (
+          <RangeInput
+            min={timeRange[0]}
+            max={timeRange[1]}
+            value={filterValue}
+            formatLabel={formatLabel}
+            animationSpeed={MS_PER_DAY}
+            onChange={setFilter}
+          />
+        )}
       </div>
     </div>
   );
