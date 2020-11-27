@@ -1,0 +1,28 @@
+version: "3.5"
+
+services:
+  flask-api:
+    container_name: atlanta_api
+    restart: always
+    build:
+      context: ./api/
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"
+    volumes:
+      - ./api:/usr/src/app
+  client:
+    container_name: atl_pd_client
+    restart: always
+    build:
+      context: ./atl-pd
+      dockerfile: Dockerfile
+    volumes:
+      - "./atl-pd:/usr/src/app"
+      - "/usr/src/app/node_modules"
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+      - HOST_URL=http://192.168.99.100:5000
